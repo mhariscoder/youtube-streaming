@@ -1,0 +1,50 @@
+Share own file to youtube stream
+================================
+ffmpeg -threads:v 2 -threads:a 8 -filter_threads 2 -thread_queue_size 512 \
+-i /home/muhammadharis/projects/youtube-streaming/server/video.mp4 \
+-filter:v "crop=in_w/2:in_h/2:1920:1280" \
+-pix_fmt yuv420p -c:v libx264 -crf 23 -profile:v high -level:v 4.2 -r:v 60 -g:v 120 -bf:v 3 -refs:v 6 -preset faster \
+-f flv rtmp://a.rtmp.youtube.com/live2/3jet-83m1-b5gr-07us-d9f
+
+Share own file to youtube stream
+================================
+ffmpeg -threads:v 2 -threads:a 8 -filter_threads 2 -thread_queue_size 512 \
+-i /home/muhammadharis/projects/youtube-streaming/server/video.mp4 \
+-filter:v "crop=in_w/2:in_h/2:1920:1280" \
+-pix_fmt yuv420p -c:v libx264 -crf 23 -profile:v high -level:v 4.2 -r:v 60 -g:v 120 -bf:v 3 -refs:v 6 -preset faster \
+-f flv \
+-rtmp_transport tcp \
+-rtmp_buffer 100 \
+-rtmp_live live \
+-rtmp_flashver "FMLE/3.0 (compatible; FMSc/1.0)" \
+-rtmp_pageurl "http://www.youtube.com/user/your_username/live" \
+-rtmp_playpath "3jet-83m1-b5gr-07us-d9f" \
+"rtmp://a.rtmp.youtube.com/live2/3jet-83m1-b5gr-07us-d9f"
+
+With audio device
+=================
+ffmpeg -f v4l2 -i /dev/video0 -f alsa -ac 1 -i hw:1 -flags +global_header -ar 44100 -ab 16k -s 640x360 -vcodec h264 -pix_fmt yuv420p -g 25 -vb 32k -profile:v baseline -r 30 -f flv "rtmp://a.rtmp.youtube.com/live2/3jet-83m1-b5gr-07us-d9f"
+
+Without audio device
+====================
+ffmpeg -f v4l2 -i /dev/video0 \
+-ar 44100 -c:a aac -b:a 128k -ac 2 \
+-vf format=yuv420p -c:v libx264 -pix_fmt yuv420p -preset fast -b:v 500k \
+-f flv "rtmp://a.rtmp.youtube.com/live2/3jet-83m1-b5gr-07us-d9f"
+
+With access token
+============
+ffmpeg -f v4l2 -i /dev/video0 \
+-ar 44100 -c:a aac -b:a 128k -ac 2 \
+-vf format=yuv420p -c:v libx264 -pix_fmt yuv420p -preset fast -b:v 500k \
+-f flv \
+-H "Authorization: Bearer ACCESS_TOKEN" \
+"rtmp://a.rtmp.youtube.com/live2/3jet-83m1-b5gr-07us-d9f"
+
+Another with access token
+=================
+ffmpeg -f v4l2 -i /dev/video0 \
+-ar 44100 -c:a aac -b:a 128k -ac 2 \
+-vf format=yuv420p -c:v libx264 -pix_fmt yuv420p -preset fast -b:v 500k \
+-f flv "rtmp://a.rtmp.youtube.com/live2/3jet-83m1-b5gr-07us-d9f?token=$ACCESS_TOKEN"
+
